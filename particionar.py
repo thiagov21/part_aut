@@ -5,25 +5,29 @@ from openpyxl.utils.dataframe import dataframe_to_rows
 from openpyxl.worksheet.table import Table, TableStyleInfo
 from openpyxl.styles import Alignment
 
-# Caminhos
-planilha_base = r'\\mao-fs01.technos.local\Arquivos\Departamental\PÓS VENDA\Laboratorio\COBRANÇA POSTOS Thiago V\automação\FILIAL\FILIAL.xlsx'
-caminho_pasta_os_filial = r'\\mao-fs01.technos.local\Arquivos\Departamental\PÓS VENDA\Laboratorio\COBRANÇA POSTOS Thiago V\automação\FILIAL\FILIAL PART'
+# Caminhos de exemplo
+# O caminho para a planilha base, onde estão os dados originais
+planilha_base = r'\\exemplo.xlsx'
+# O caminho da pasta onde as planilhas separadas serão salvas
+caminho_pasta_os_filial = r'\\exemplo_PART'
 
-# Ler a planilha base
+# Ler a planilha base (exemplo com dados fictícios)
+# Supondo que a planilha contém colunas como 'Filial', 'Nome', 'Data', 'Valor'
 df = pd.read_excel(planilha_base)
 
-# Obter a lista de postos únicos
+# Obter a lista de filiais únicas a partir da coluna 'Filial'
 filial_unica = df['Filial'].unique()
 
-# Processar cada posto
+# Processar cada filial
 for filial in filial_unica:
+    # Filtrar o DataFrame para a filial atual
     filial_df = df[df['Filial'] == filial]
     
-    # Verificar e criar diretório, se necessário
+    # Verificar e criar diretório para a filial, se necessário
     if not os.path.exists(caminho_pasta_os_filial):
         os.makedirs(caminho_pasta_os_filial)
     
-    # Criar o arquivo Excel separado para o posto
+    # Criar o arquivo Excel separado para a filial
     arquivo_filial = os.path.join(caminho_pasta_os_filial, f'{filial}.xlsx')
     filial_df.to_excel(arquivo_filial, index=False)
     
@@ -59,7 +63,7 @@ for filial in filial_unica:
     tab.tableStyleInfo = style
     ws.add_table(tab)
     
-    # Salvar o arquivo com a formatação
+    # Salvar o arquivo com a formatação aplicada
     wb.save(arquivo_filial)
     
-print('Processo concluído e planilhas formatadas com colunas ajustadas.')
+print('Processo concluído e planilhas formatadas com colunas ajustadas para cada filial.')
